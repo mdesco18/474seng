@@ -9,7 +9,7 @@ import sys
 import argparse
 import math
 import numpy as np
-import collections
+import NaiveBayesAccuracy as nba
 
 global debug
 
@@ -167,16 +167,16 @@ Compute NaiveBayes with the multinomialModel
 """
 def multinomialModel(classes, traindata, testdata):
 
-	result = ""
+	result = []
 	words, prior, condprob = trainingM(classes, traindata)
 	
 	for doc in testdata:
 		cla = applyM(classes, words, prior, condprob, doc)
-		result += str(cla) + '\n'
+		result.append(cla)
 		
 		if debug:
 			print(doc)
-			print(cmap)
+			print(cla)
 			
 	return result
 	
@@ -188,7 +188,7 @@ def main():
 	Using ArgumentParser to take in files from command line arguments
 	"""
 	parser = argparse.ArgumentParser(prog='NaiveBayes.py',description='Take in files')
-	parser.add_argument('-m', '--multi', dest='multinomial', action='store_true', default= False, help='use the multinomial model')
+	parser.add_argument('-m', '--multi', dest='multinomial', action='store_true', default= True, help='use the multinomial model') #default true as bernoulli is not yet implemented
 	parser.add_argument('-b', '--bernie', dest='bernoulli', action='store_true', default= False, help='use the bernoulli model')
 	parser.add_argument('-id', '--traindata', dest='traindata', nargs=1, type=argparse.FileType('r'), help='the train data')
 	parser.add_argument('-il', '--trainlabel', dest='trainlabel', nargs=1, type=argparse.FileType('r'), help='the test labels')
@@ -206,6 +206,7 @@ def main():
 	bernoulli = args.bernoulli
 	debug = args.debug
 	outfile = args.outfile
+	result = []
 	
 	if debug:
 		sys.stdout = outfile
@@ -214,6 +215,8 @@ def main():
 	trainlabel = fileLoader(args.trainlabel[0])
 	classes = classSeperator(traindata, trainlabel)
 	testdata = fileLoader(args.testdata[0])
+	testlabel = fileLoader(args.testlabel[0])
+	
 	if multinomial:
 		result = multinomialModel(classes, traindata, testdata)
 	elif bernoulli:
@@ -221,7 +224,14 @@ def main():
 	else:
 		print("Improper Usage")
 	
-	outfile.write(result)
+	accuracy = nba.fromNB(result, testlabel)
+	s = '{:.3f}%\n'.format(accuracy)
+	outfile.write(s)
+	outfile.write("Training Data: {0}\n".format(args.traindata[0].name))
+	outfile.write("Training Labels: {0}\n".format(args.trainlabel[0].name))
+	outfile.write("Testing Data: {0}\n".format(args.testdata[0].name))
+	outfile.write("Testing Label: {0}\n".format(args.testlabel[0].name))
+	outfile.write("Outfile: {0}".format(args.outfile.name))
 	outfile.close()
 
 	
