@@ -7,7 +7,6 @@ Project: SENG474 a1
 
 import sys
 import argparse
-import math
 import numpy as np
 import NaiveBayesAccuracy as nba
 
@@ -22,6 +21,7 @@ def fileLoader(file):
 	file.close()
 	
 	return data
+	
 """
 Create a mapping of classes to data
 """
@@ -34,6 +34,7 @@ def classSeperator(data, labels):
 			map[labels[i]] = []
 		map[labels[i]].append(data[i])
 	return map
+	
 """
 Extract the documents from the dataset
 """
@@ -45,66 +46,73 @@ def extractData(docs):
 		words += d
 	return words
 	
-def extractDataFromDoc(docs):
+def extractDataFromDoc(doc):
 
-	return docs.split(" ")
+	return doc.split(" ")
+	
 """
 Use the training data with the multinomialModel
 """
 def trainingM(classes, traindata):
 
 	global debug 
-	text = {}
-	words = []
-	N = 0
-	docNum = {}
-	prior = {}
-	condprob = {}
-	T = {}
-	vocab = []
-	unique = {}
-	
+	text = {} # text from class c
+	words = [] # text from data
+	N = 0 # number of documents
+	docNum = {} # number of documents in class c
+	prior = {} # probability of c estimated as fraction of all training documents belonging to c
+	condprob = {} # probability of c from t in text[c] estimated as the relative frequency of t in documents belonging to c  
+	T = {} # frequency of t in c
+	vocab = [] # unique words from data
+	unique = {} # occurences of t in V from data
 	
 	words = extractData(traindata)
+	
 	if debug:
 		print(words)
-	N = sum([len(classes[c]) for c in classes])
+		
+	N = sum([len(classes[c]) for c in classes]) # CountDocs
 	
 	for t in words:
 		if t not in unique:
 			unique[t] = 1
-			condprob[t] = {}
+			condprob[t] = {} #initialize
 		else:
 			unique[t] += 1
 		
 	
 	vocab = list(unique.keys())
 	vocab.sort()
+	
 	if debug:
 		print(vocab)
 		print(unique)
 	
 	for c in classes:
-		text[c] = extractData(classes[c])
-		docNum[c] = len(classes[c])	
+		text[c] = extractData(classes[c]) #ConcatenateTextOfAllDocsInClass
+		docNum[c] = len(classes[c])	# CountDocsInClass
+		
 		""" Using sentences or words as the 'documents' is negligible probability difference
 		docNum[c] = len(text[c])
 		N = len(words)
 		"""
-		prior[c] = docNum[c] / N
+		
+		prior[c] = docNum[c] / N 
+		
 		if debug: 
 			print(len(classes[c]))
 			print(len(text[c]))
 			print(N)
-			print(prior[c])
+			print(prior[c
+			
 		T[c] = {}
-		
-		
+		# CountTokensOfTerm
 		for t in text[c]:
 			if t not in T[c]:
 				T[c][t] = 1
 			else:
 				T[c][t] += 1
+				
 		if debug:
 			print(T[c])
 			print(len(T[c]))
@@ -114,17 +122,18 @@ def trainingM(classes, traindata):
 		print(len(text[c]))
 		print(len(words))
 		print(len(vocab))
+		
 	for c in classes:
 		for t in vocab:
 			if t not in T[c]:
 				T[c][t] = 0
-			condprob[t][c] = (T[c][t] + 1) / (len(text[c]) + len(vocab))
+			condprob[t][c] = (T[c][t] + 1) / (len(text[c]) + len(vocab)) #zero frequency problem
 	
 	if debug:
 		print(condprob)
 		
-	
 	return vocab, prior, condprob
+	
 """
 Apply the multinomialModel on the testdata
 """
@@ -132,31 +141,40 @@ def applyM(classes, vocab, prior, condprob, docs):
 
 	global debug
 	
-	score = {}
-	array = []
-	key = []
+	score = {} # likelihood of being of class c
+	array = [] # scores as array for numpy
+	key = [] # track classes in array
+	
 	words = extractDataFromDoc(docs)
 	
 	if debug:
 		print(words)
+		
 	for c in classes:
 		key.append(c)
 		score[c] = np.log(prior[c])
+		
 		if debug:
 			print(score[c])
+			
 		for t in words:
 			if t in vocab:
+			
 				if debug:
 					print(condprob[t][c])
+					
 				score[c] += np.log(condprob[t][c])
 			
 		if debug:
 			print(score[c])
+			
 		array.append(score[c])
 	
 	if debug:
 		print(array)
-	cmap = np.argmax(array)
+		
+	cmap = np.argmax(array) # cmap = index of maximum a posteriori
+	
 	return key[cmap]
 	
 	
@@ -224,7 +242,8 @@ def main():
 	else:
 		print("Improper Usage")
 	
-	accuracy = nba.fromNB(result, testlabel)
+	accuracy = nba.fromNB(result, testlabel) # compare results with test labels
+	
 	s = '{:.3f}%\n'.format(accuracy)
 	outfile.write(s)
 	outfile.write("Training Data: {0}\n".format(args.traindata[0].name))

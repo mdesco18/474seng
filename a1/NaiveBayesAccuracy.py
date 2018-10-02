@@ -1,5 +1,6 @@
 """
 NaiveBayesAccuracy.py
+Author: Marc-Andre Descoteaux
 """
 
 import sys
@@ -16,7 +17,10 @@ def fileLoader(file):
 	file.close()
 	
 	return data
-	
+
+"""
+Count occurrences of class 0 in file
+"""
 def counter0(list):
 	count = 0
 	for l in list:
@@ -25,7 +29,9 @@ def counter0(list):
 			
 	return count
 		
-		
+"""
+Count occurrences of class 1 in file
+""" 
 def counter1(list):
 	count = 0
 	for l in list:
@@ -34,7 +40,9 @@ def counter1(list):
 			
 	return count
 		
-
+"""
+Determine accuracy by class
+"""
 def classPercent(r0, t0, r1, t1):
 
 	if r0 < t0:
@@ -51,6 +59,7 @@ def classPercent(r0, t0, r1, t1):
 
 """
 interface for NaiveBayes
+@return the accuracy percentage of the NaiveBayes implementation for all classes
 """
 def fromNB(results, test):
 	
@@ -64,7 +73,7 @@ def fromNB(results, test):
 	
 	
 """
-Run from command line
+Run from command line. Unit Test
 """
 def main():
 
