@@ -88,7 +88,7 @@ def main():
 	parser.add_argument('-D', '--debug', dest='debug', action='store_true', default= False, help='the debugging argument')
 	parser.add_argument('-o', '--outfile', dest='outfile', nargs='?', type=argparse.FileType('w'),  default= sys.stdout, help='the outfile')
 	args = parser.parse_args()
-	#parser.print_help()
+	parser.print_help()
 	
 	results = fileLoader(args.results[0])
 	test = fileLoader(args.testlabel[0])

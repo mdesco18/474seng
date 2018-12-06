@@ -1,0 +1,11 @@
+@relation poker
+
+@attribute cards_dealt numeric
+@attribute player_position numeric
+@attribute profitability numeric
+@attribute card1 {2, 3, 4, 5, 6, 7, 8, 9, T, J, Q, K, A}
+@attribute card2 {2, 3, 4, 5, 6, 7, 8, 9, T, J, Q, K, A}
+@attribute suited {yes, no}
+@attribute win {yes, no}
+
+@data

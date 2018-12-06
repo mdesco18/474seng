@@ -26,3 +26,21 @@ This program is designed as an implementation for the data mining practice of Na
 	  -D, --debug           the debugging argument
 	  -o [OUTFILE], --outfile [OUTFILE]
 							the outfile
+							
+	Implements NaiveBayesAccuracy.py
+	
+	usage: NaiveBayesAccuracy.py [-h] [-r RESULTS] [-t TESTLABEL] [-D]
+                             [-o [OUTFILE]]
+
+	Take in files
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -r RESULTS, --results RESULTS
+							the results from NaiveBayes
+	  -t TESTLABEL, --testlabel TESTLABEL
+							the test labels
+	  -D, --debug           the debugging argument
+	  -o [OUTFILE], --outfile [OUTFILE]
+							the outfile
+
